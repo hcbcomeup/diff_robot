@@ -4,3 +4,11 @@
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/))
 
 ## [Unreleased]
+
+### Added
+- 初始项目结构搭建
+- diff_robot_description: 机器人模型描述包（URDF/xacro、meshes、RViz配置）
+- diff_robot_control: Gazebo仿真与ros2_control控制器配置
+- diff_robot_teleop: 键盘遥控节点
+- 项目文档：README
+- 全局脚本：一键编译、环境配置
