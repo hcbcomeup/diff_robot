@@ -15,6 +15,7 @@ include_directories(
 
 add_executable(teleop_twist_keyboard
   src/teleop_twist_keyboard.cpp
+  src/teleop_twist_keyboard_main.cpp
 )
 ament_target_dependencies(teleop_twist_keyboard
   rclcpp

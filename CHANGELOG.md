@@ -12,3 +12,6 @@
 - diff_robot_teleop: 键盘遥控节点
 - 项目文档：README
 - 全局脚本：一键编译、环境配置
+
+### Changed
+- diff_robot_teleop: 重构代码结构，实现节点功能与主循环逻辑的分离
