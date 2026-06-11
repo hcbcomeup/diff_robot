@@ -15,3 +15,6 @@
 
 ### Changed
 - diff_robot_teleop: 重构代码结构，实现节点功能与主循环逻辑的分离
+
+### Added
+- diff_robot_navigation: 新增导航与避障功能包,基于势场法（APF）实现自动避障
