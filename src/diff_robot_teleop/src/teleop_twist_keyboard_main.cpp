@@ -64,7 +64,7 @@ void signalHandler(int signum)
   exit(0);
 }
 
-char getKey(struct termios settings)
+char getKey(const struct termios & settings)
 {
   struct termios raw = settings;
   raw.c_lflag &= ~(ICANON | ECHO);
@@ -125,9 +125,11 @@ int main(int argc, char** argv)
           double new_linear_speed = g_node->getLinearSpeed() * speed_it->second.first;
           double new_angular_speed = g_node->getAngularSpeed() * speed_it->second.second;
           
-          if (new_linear_speed > 2.0) new_linear_speed = 2.0;
+          double max_linear = g_node->getMaxLinearSpeed();
+          double max_angular = g_node->getMaxAngularSpeed();
+          if (new_linear_speed > max_linear) new_linear_speed = max_linear;
           if (new_linear_speed < 0.1) new_linear_speed = 0.1;
-          if (new_angular_speed > 4.0) new_angular_speed = 4.0;
+          if (new_angular_speed > max_angular) new_angular_speed = max_angular;
           if (new_angular_speed < 0.1) new_angular_speed = 0.1;
           
           g_node->setLinearSpeed(new_linear_speed);

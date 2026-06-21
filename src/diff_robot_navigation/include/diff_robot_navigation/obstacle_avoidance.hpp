@@ -83,9 +83,13 @@ private:
   double influence_distance_;
   double attractive_gain_;
   double repulsive_gain_;
+  double angular_gain_;
 
   std::string scan_topic_;
   std::string cmd_vel_topic_;
+
+  mutable Vector2D cached_attractive_force_;
+  mutable bool attractive_force_valid_;
 };
 
 }  // namespace diff_robot_navigation

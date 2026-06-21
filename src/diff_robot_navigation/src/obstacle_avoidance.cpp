@@ -12,7 +12,8 @@ namespace diff_robot_navigation
 {
 
 ObstacleAvoidance::ObstacleAvoidance(const rclcpp::NodeOptions & options)
-: Node("obstacle_avoidance", options)
+: Node("obstacle_avoidance", options),
+  attractive_force_valid_(false)
 {
   this->declare_parameter("linear_speed", 0.3);
   this->declare_parameter("angular_speed", 0.8);
@@ -20,6 +21,7 @@ ObstacleAvoidance::ObstacleAvoidance(const rclcpp::NodeOptions & options)
   this->declare_parameter("influence_distance", 1.5);
   this->declare_parameter("attractive_gain", 1.0);
   this->declare_parameter("repulsive_gain", 100.0);
+  this->declare_parameter("angular_gain", 2.0);
   this->declare_parameter("scan_topic", std::string("/scan"));
   this->declare_parameter("cmd_vel_topic", std::string("/diff_drive_controller/cmd_vel_unstamped"));
 
@@ -29,6 +31,7 @@ ObstacleAvoidance::ObstacleAvoidance(const rclcpp::NodeOptions & options)
   influence_distance_ = this->get_parameter("influence_distance").as_double();
   attractive_gain_ = this->get_parameter("attractive_gain").as_double();
   repulsive_gain_ = this->get_parameter("repulsive_gain").as_double();
+  angular_gain_ = this->get_parameter("angular_gain").as_double();
   scan_topic_ = this->get_parameter("scan_topic").as_string();
   cmd_vel_topic_ = this->get_parameter("cmd_vel_topic").as_string();
 
@@ -45,6 +48,7 @@ ObstacleAvoidance::ObstacleAvoidance(const rclcpp::NodeOptions & options)
   RCLCPP_INFO(this->get_logger(), "影响距离: %.2f m", influence_distance_);
   RCLCPP_INFO(this->get_logger(), "吸引力增益: %.2f", attractive_gain_);
   RCLCPP_INFO(this->get_logger(), "排斥力增益: %.2f", repulsive_gain_);
+  RCLCPP_INFO(this->get_logger(), "角速度增益: %.2f", angular_gain_);
   RCLCPP_INFO(this->get_logger(), "订阅话题: %s", scan_topic_.c_str());
   RCLCPP_INFO(this->get_logger(), "发布话题: %s", cmd_vel_topic_.c_str());
 }
@@ -90,16 +94,21 @@ void ObstacleAvoidance::processAvoidance(const sensor_msgs::msg::LaserScan::Shar
 
 Vector2D ObstacleAvoidance::calculateAttractiveForce() const
 {
-  // 假设目标在正前方，吸引力指向正前方
-  // 吸引力 = 增益 * (目标位置 - 当前位置)
-  // 简化为：吸引力 = 增益 * 单位向量(1, 0)
-  return Vector2D(attractive_gain_, 0.0);
+  if (!attractive_force_valid_) {
+    // 假设目标在正前方，吸引力指向正前方
+    // 吸引力 = 增益 * (目标位置 - 当前位置)
+    // 简化为：吸引力 = 增益 * 单位向量(1, 0)
+    cached_attractive_force_ = Vector2D(attractive_gain_, 0.0);
+    attractive_force_valid_ = true;
+  }
+  return cached_attractive_force_;
 }
 
 Vector2D ObstacleAvoidance::calculateRepulsiveForce(
   const sensor_msgs::msg::LaserScan::SharedPtr scan) const
 {
   Vector2D total_repulsive(0.0, 0.0);
+  const double inv_influence = 1.0 / influence_distance_;
 
   for (size_t i = 0; i < scan->ranges.size(); ++i) {
     float range = scan->ranges[i];
@@ -117,9 +126,10 @@ Vector2D ObstacleAvoidance::calculateRepulsiveForce(
     double obstacle_y = range * std::sin(angle);
 
     // 排斥力 = 增益 * (1/距离 - 1/影响距离) * (1/距离^2)
-    double distance = range;
+    // 优化：预计算 1/distance，避免重复除法
+    double inv_distance = 1.0 / range;
     double repulsive_magnitude = repulsive_gain_ *
-      (1.0 / distance - 1.0 / influence_distance_) / (distance * distance);
+      (inv_distance - inv_influence) * inv_distance * inv_distance;
 
     // 排斥力方向：从障碍物指向机器人（即远离障碍物）
     // 在机器人坐标系中，方向为 (-obstacle_x, -obstacle_y) 的单位向量
@@ -153,8 +163,7 @@ void ObstacleAvoidance::forceToVelocity(
 
   // 简单的比例控制：角速度 = 期望角度 * 增益
   // 限制在最大角速度范围内
-  double angular_gain = 2.0;  // 角度到角速度的增益
-  angular_z = std::max(-angular_speed_, std::min(angular_speed_, desired_angle * angular_gain));
+  angular_z = std::max(-angular_speed_, std::min(angular_speed_, desired_angle * angular_gain_));
 
   // 如果线速度为负（后退），反转角速度方向
   if (linear_x < 0) {

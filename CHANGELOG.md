@@ -18,3 +18,15 @@
 
 ### Added
 - diff_robot_navigation: 新增导航与避障功能包,基于势场法（APF）实现自动避障
+
+### Fixed
+- diff_robot_teleop: 修复速度限制硬编码问题，速度上下限现在使用 `max_linear_speed_` / `max_angular_speed_` 成员变量，支持通过参数动态调整
+- diff_robot_control: 修复 Gazebo launch 文件中 `joint_state_publisher` 与 `joint_state_broadcaster` 同时运行导致的 `/joint_states` 话题冲突
+- build_all.sh: 修复参数解析 `for arg in "$@"` 内使用 `shift` 无效的 bug，改为 `while [ $# -gt 0 ]` 循环
+- diff_robot_description: 修复万向轮 `caster_joint` 使用 `type="fixed"` 导致无法滑动的问题，改为 `type="continuous"` 并添加阻尼与摩擦配置
+
+### Performance
+- diff_robot_navigation: `calculateRepulsiveForce()` 重复除法优化，预计算 `inv_distance` 和 `inv_influence`，以乘法替代除法，减少 LiDAR 每帧数百点的浮点运算开销
+- diff_robot_teleop: `getKey()` 函数参数由按值传递 `struct termios` 改为 const 引用传递，避免每次调用复制 ~60 字节
+- diff_robot_navigation: `calculateAttractiveForce()` 常量缓存优化，吸引力向量只计算一次并缓存，避免重复构造相同对象
+- diff_robot_navigation: `forceToVelocity()` 中 `angular_gain` 由硬编码 `2.0` 改为可配置参数，默认值保持不变，新增 `angular_gain` 字段到 YAML 配置文件

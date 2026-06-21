@@ -14,7 +14,7 @@ if [ -z "$ROS_DISTRO" ]; then
         source /opt/ros/humble/setup.bash
     else
         echo "[ERROR] 未找到ROS2 Humble，请先安装"
-        return 1
+        exit 1
     fi
 fi
 

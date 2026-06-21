@@ -32,6 +32,8 @@ public:
 
   double getLinearSpeed() const { return linear_speed_; }
   double getAngularSpeed() const { return angular_speed_; }
+  double getMaxLinearSpeed() const { return max_linear_speed_; }
+  double getMaxAngularSpeed() const { return max_angular_speed_; }
   void setLinearSpeed(double speed) { linear_speed_ = speed; }
   void setAngularSpeed(double speed) { angular_speed_ = speed; }
 

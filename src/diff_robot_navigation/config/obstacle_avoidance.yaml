@@ -11,6 +11,7 @@ obstacle_avoidance:
     # 势场法参数
     attractive_gain: 1.0
     repulsive_gain: 100.0
+    angular_gain: 2.0
     
     # 话题配置
     scan_topic: "/scan"

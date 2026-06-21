@@ -22,14 +22,17 @@ echo "[INFO] 工作空间: $WS_DIR"
 
 CLEAN=false
 VERBOSE=""
-for arg in "$@"; do
-    case $arg in
+while [ $# -gt 0 ]; do
+    case $1 in
         --clean)
             CLEAN=true
             shift
             ;;
         --verbose)
             VERBOSE="--cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON"
+            shift
+            ;;
+        *)
             shift
             ;;
     esac
