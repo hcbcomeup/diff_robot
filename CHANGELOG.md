@@ -12,18 +12,18 @@
 - diff_robot_teleop: 键盘遥控节点
 - 项目文档：README
 - 全局脚本：一键编译、环境配置
-
-### Changed
-- diff_robot_teleop: 重构代码结构，实现节点功能与主循环逻辑的分离
-
-### Added
-- diff_robot_navigation: 新增导航与避障功能包,基于势场法（APF）实现自动避障
+- diff_robot_navigation: 新增导航与避障功能包，基于势场法（APF）实现自动避障
+- docker: 新增 Dockerfile、docker-compose.yaml、entrypoint.sh，支持容器化编译与运行
 
 ### Fixed
 - diff_robot_teleop: 修复速度限制硬编码问题，速度上下限现在使用 `max_linear_speed_` / `max_angular_speed_` 成员变量，支持通过参数动态调整
 - diff_robot_control: 修复 Gazebo launch 文件中 `joint_state_publisher` 与 `joint_state_broadcaster` 同时运行导致的 `/joint_states` 话题冲突
 - build_all.sh: 修复参数解析 `for arg in "$@"` 内使用 `shift` 无效的 bug，改为 `while [ $# -gt 0 ]` 循环
 - diff_robot_description: 修复万向轮 `caster_joint` 使用 `type="fixed"` 导致无法滑动的问题，改为 `type="continuous"` 并添加阻尼与摩擦配置
+
+### Changed
+- diff_robot_teleop: 重构代码结构，实现节点功能与主循环逻辑的分离
+- README: 完善文档内容，修正话题名称、新增导航避障使用说明、键盘遥控按键表、避障参数表及 Docker 运行指南
 
 ### Performance
 - diff_robot_navigation: `calculateRepulsiveForce()` 重复除法优化，预计算 `inv_distance` 和 `inv_influence`，以乘法替代除法，减少 LiDAR 每帧数百点的浮点运算开销

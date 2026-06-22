@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  diff-robot:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: diff-robot:humble
+    container_name: diff_robot
+    stdin_open: true
+    tty: true
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
