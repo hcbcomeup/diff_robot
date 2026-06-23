@@ -83,6 +83,36 @@
   <xacro:wheel prefix="left" y_offset="${wheel_separation/2}"/>
   <xacro:wheel prefix="right" y_offset="${-wheel_separation/2}"/>
 
+  <!-- ros2_control 硬件接口 -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="left_wheel_joint">
+      <command_interface name="velocity">
+        <min>-1.0</min>
+        <max>1.0</max>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_wheel_joint">
+      <command_interface name="velocity">
+        <min>-1.0</min>
+        <max>1.0</max>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- Gazebo ros2_control 插件 -->
+  <gazebo>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <parameters>$(find diff_robot_control)/config/diff_robot_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
   <!-- 万向轮 -->
   <link name="caster_wheel">
     <visual>

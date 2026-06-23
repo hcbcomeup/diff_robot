@@ -20,6 +20,7 @@
 - diff_robot_control: 修复 Gazebo launch 文件中 `joint_state_publisher` 与 `joint_state_broadcaster` 同时运行导致的 `/joint_states` 话题冲突
 - build_all.sh: 修复参数解析 `for arg in "$@"` 内使用 `shift` 无效的 bug，改为 `while [ $# -gt 0 ]` 循环
 - diff_robot_description: 修复万向轮 `caster_joint` 使用 `type="fixed"` 导致无法滑动的问题，改为 `type="continuous"` 并添加阻尼与摩擦配置
+- diff_robot_description: 修复 URDF 缺少 `<ros2_control>` 标签和 `libgazebo_ros2_control.so` 插件，导致 controller_manager 无法启动、spawner 持续等待 `/controller_manager/list_controllers` 服务、仿真机器人不响应 /cmd_vel 指令的问题
 
 ### Changed
 - diff_robot_teleop: 重构代码结构，实现节点功能与主循环逻辑的分离
