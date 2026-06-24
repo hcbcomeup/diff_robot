@@ -16,6 +16,7 @@
 - docker: 新增 Dockerfile、docker-compose.yaml、entrypoint.sh，支持容器化编译与运行
 
 ### Fixed
+- env_setup.sh: 修复帮助信息中遗漏 `diff_robot_navigation` 避障导航命令的问题，新增 `ros2 launch diff_robot_navigation navigation.launch.py`
 - diff_robot_teleop: 修复速度限制硬编码问题，速度上下限现在使用 `max_linear_speed_` / `max_angular_speed_` 成员变量，支持通过参数动态调整
 - diff_robot_control: 修复 Gazebo launch 文件中 `joint_state_publisher` 与 `joint_state_broadcaster` 同时运行导致的 `/joint_states` 话题冲突
 - build_all.sh: 修复参数解析 `for arg in "$@"` 内使用 `shift` 无效的 bug，改为 `while [ $# -gt 0 ]` 循环
