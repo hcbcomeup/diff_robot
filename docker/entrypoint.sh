@@ -1,3 +1,4 @@
+#!/bin/bash
 source /opt/ros/humble/setup.bash
 source /ws_robot/install/setup.bash
 

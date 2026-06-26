@@ -9,10 +9,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 
-#include <string>
-#include <map>
-#include <utility>
-
 namespace diff_robot_teleop
 {
 

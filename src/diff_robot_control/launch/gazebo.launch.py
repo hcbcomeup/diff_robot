@@ -1,7 +1,6 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -15,8 +14,6 @@ def generate_launch_description():
     
     xacro_file = pkg_description + '/urdf/diff_robot.urdf.xacro'
     robot_description = Command(['xacro ', xacro_file])
-    
-    controller_config = pkg_share + '/config/diff_robot_controllers.yaml'
     
     return LaunchDescription([
         DeclareLaunchArgument(
